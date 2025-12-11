@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from ..utils.logging import get_logger
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv(override=True)
 
 # WARNING: The following lines disable SSL certificate verification globally.
 # This is a security risk and should only be used for local development.

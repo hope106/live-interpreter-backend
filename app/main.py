@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .websocket.handler import WebSocketHandler
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 def _allowed_origins() -> List[str]:
