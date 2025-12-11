@@ -86,13 +86,13 @@ class WebSocketHandler:
             await send_error(self.websocket, "Session not initialized", code="NOT_READY")
             return
         preview = message.data[:32]
-        logger.debug(
-            "Received audio chunk ts=%s size=%d preview=%s%s",
-            message.timestamp,
-            len(message.data),
-            preview,
-            "..." if len(message.data) > len(preview) else "",
-        )
+        # logger.debug(
+        #     "Received audio chunk ts=%s size=%d preview=%s%s",
+        #     message.timestamp,
+        #     len(message.data),
+        #     preview,
+        #     "..." if len(message.data) > len(preview) else "",
+        # )
         await self.gemini_service.send_audio(message.data)
 
     async def _handle_interrupt(self) -> None:

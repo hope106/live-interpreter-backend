@@ -242,11 +242,11 @@ class GeminiService:
                 try:
                     async for message in self.session.receive():
                         message_count += 1
-                        current_time = time.time()
-                        time_since_last = current_time - last_message_time
-                        logger.debug("📬 Message #%d received from Gemini (%.2fs since last message)",
-                                   message_count, time_since_last)
-                        last_message_time = current_time
+                        # current_time = time.time()
+                        # time_since_last = current_time - last_message_time
+                        # logger.debug("📬 Message #%d received from Gemini (%.2fs since last message)",
+                        #            message_count, time_since_last)
+                        # last_message_time = current_time
                         await self._handle_message(message)
 
                     # If receive() completes normally (e.g., after turn_complete),
