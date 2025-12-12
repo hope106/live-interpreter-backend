@@ -18,7 +18,7 @@ def _allowed_origins() -> List[str]:
     return [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "https://your-netlify-app.netlify.app",
+        "https://graceful-semifreddo-4456f6.netlify.app",
     ]
 
 
