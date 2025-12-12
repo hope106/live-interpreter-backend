@@ -57,23 +57,23 @@ MODEL_NAME = "gemini-2.5-flash-native-audio-preview-09-2025"
 ┌─────────────────────────────────────────────┐
 │         WebSocketHandler Layer              │
 │         (app/websocket/handler.py)          │
-│   - 메시지 라우팅                            │
-│   - 세션 관리                                │
-│   - 콜백 처리                                │
+│   - 메시지 라우팅                              │
+│   - 세션 관리                                 │
+│   - 콜백 처리                                 │
 └─────────────────────────────────────────────┘
                     ↓ ↑
 ┌─────────────────────────────────────────────┐
 │           GeminiService Layer               │
 │      (app/services/gemini_service.py)       │
-│   - Gemini Live API 통신                    │
-│   - VAD (음성 활동 감지)                     │
-│   - 오디오/텍스트 처리                       │
-│   - 턴 상태 관리                             │
+│   - Gemini Live API 통신                     │
+│   - VAD (음성 활동 감지)                       │
+│   - 오디오/텍스트 처리                          │
+│   - 턴 상태 관리                               │
 └─────────────────────────────────────────────┘
                     ↓ ↑
 ┌─────────────────────────────────────────────┐
 │        Google Gemini Live API               │
-│     (WebSocket 기반 실시간 통신)             │
+│     (WebSocket 기반 실시간 통신)                │
 └─────────────────────────────────────────────┘
 ```
 
@@ -465,24 +465,24 @@ async def _handle_message(self, message: LiveServerMessage) -> None:
                             ↓ ↑ [TurnCompleteMessage]
 ┌─────────────────────────────────────────────────────────────┐
 │               WebSocketHandler (app/websocket)              │
-│  - 메시지 파싱 및 라우팅                                     │
-│  - 콜백 함수를 통한 응답 전송                                │
+│  - 메시지 파싱 및 라우팅                                         │
+│  - 콜백 함수를 통한 응답 전송                                     │
 └─────────────────────────────────────────────────────────────┘
                            ↓ ↑
           [Audio Blob PCM] ↓ ↑ [LiveServerMessage]
 ┌─────────────────────────────────────────────────────────────┐
 │             GeminiService (app/services)                    │
-│  - VAD 필터링                                               │
-│  - Gemini Live API 스트리밍                                 │
-│  - 턴 상태 관리                                              │
+│  - VAD 필터링                                                 │
+│  - Gemini Live API 스트리밍                                   │
+│  - 턴 상태 관리                                                │
 └─────────────────────────────────────────────────────────────┘
                            ↓ ↑
               [Realtime Audio Input] ↓ ↑ [Server Content]
 ┌─────────────────────────────────────────────────────────────┐
 │           Google Gemini Live API (WebSocket)                │
-│  - gemini-2.5-flash-native-audio-preview-09-2025           │
-│  - 음성 입력 → 음성 출력 (End-to-End)                       │
-│  - 실시간 transcription                                      │
+│  - gemini-2.5-flash-native-audio-preview-09-2025            │
+│  - 음성 입력 → 음성 출력 (End-to-End)                            │
+│  - 실시간 transcription                                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -726,15 +726,15 @@ DEFAULT_VAD_HANGOVER = int(os.getenv("VAD_HANGOVER_FRAMES", "15"))
 평균 에너지 계산
     ↓
 ┌──────────────────────────────┐
-│ 에너지 >= 임계값?             │
+│ 에너지 >= 임계값?               │
 └──────────────────────────────┘
     ↓ YES          ↓ NO
 발화 시작      ┌──────────────┐
-전송 허용      │ 발화 중?      │
-               └──────────────┘
+전송 허용      │ 발화 중?       │
+             └──────────────┘
                   ↓ YES    ↓ NO
               ┌────────────────┐
-              │ Hangover 남음?│
+              │ Hangover 남음?  │
               └────────────────┘
                 ↓ YES    ↓ NO
               전송 허용  차단
@@ -899,37 +899,37 @@ await self.on_input_transcription(self.current_input_text, True)
 ### 전체 흐름
 
 ```
-Client          FastAPI         WebSocketHandler    GeminiService       Gemini API
-  │                 │                   │                  │                  │
-  │─────connect─────>│                  │                  │                  │
-  │<───accept────────│                  │                  │                  │
-  │                  │                  │                  │                  │
-  │──InitMessage─────>│──────────────────>│                │                  │
-  │                  │                   │──new GeminiService────>│           │
-  │                  │                   │                  │──connect()─────>│
-  │                  │                   │                  │<─session open───│
-  │                  │                   │<─start receive task────│           │
-  │<───Connected─────│<──────────────────│                  │                  │
-  │                  │                  │                  │                  │
-  │──AudioMessage────>│──────────────────>│                │                  │
-  │                  │                   │──send_audio()──>│                  │
-  │                  │                   │                  │──VAD check──────│
-  │                  │                   │                  │──send_realtime─>│
-  │                  │                   │                  │<─ServerMessage──│
-  │                  │                   │<─on_input_transcription──│        │
-  │<───TranscriptionMsg─<────────────────│                  │                 │
-  │                  │                   │                  │<─model_turn─────│
-  │                  │                   │<─on_audio_response───────│         │
-  │<───AudioResponse──<───────────────────│                  │                │
-  │                  │                   │                  │<─turn_complete──│
-  │                  │                   │<─on_turn_complete────────│         │
-  │<───TurnComplete───<───────────────────│                  │                │
-  │                  │                   │                  │                  │
-  │──CloseMessage────>│──────────────────>│                  │                │
-  │                  │                   │──cleanup()──────>│                  │
-  │                  │                   │                  │──disconnect()──>│
-  │<───close─────────│                   │                  │<─session close──│
-  │                  │                  │                  │                  │
+Client          FastAPI         WebSocketHandler              GeminiService         Gemini API
+  │                  │                  │                           │                   │
+  │─────connect─────>│                  │                           │                   │
+  │<───accept────────│                  │                           │                   │
+  │                  │                  │                           │                   │
+  │──InitMessage────>│─────────────────>│                           │                   │
+  │                  │                  │──new GeminiService ────>  │                   │
+  │                  │                  │                           │──connect()─────>  │
+  │                  │                  │                           │<─session open───  │
+  │                  │                  │<─start receive task   ────│                   │
+  │<───Connected─────│<─────────────────│                           │                   │
+  │                  │                  │                           │                   │
+  │──AudioMessage────>│────────────────>│                           │                   │
+  │                  │                  │──send_audio()──>          │                   │
+  │                  │                  │                           │──VAD check ────── │
+  │                  │                  │                           │──send_realtime ─> │
+  │                  │                  │                           │<─ServerMessage ── │
+  │                  │                  │<─on_input_transcription── │                   │
+  │<───TranscriptionMsg─<───────────────│                           │                   │
+  │                  │                  │                           │<─model_turn  ─────│
+  │                  │                  │<─on_audio_response ───────│                   │
+  │<───AudioResponse──<─────────────────│                           │                   │
+  │                  │                  │                           │<─turn_complete  ──│
+  │                  │                  │<─on_turn_complete ────────│                   │
+  │<───TurnComplete───<─────────────────│                           │                   │
+  │                  │                  │                           │                   │
+  │──CloseMessage────>│────────────────>│                           │                   │
+  │                  │                  │──cleanup()         ──────>│                   │
+  │                  │                  │                           │──disconnect()──>  │
+  │<───close─────────│                  │                           │<─session close──  │
+  │                  │                  │                           │                   │
 ```
 
 ---
@@ -959,4 +959,3 @@ Client          FastAPI         WebSocketHandler    GeminiService       Gemini A
 
 **작성일**: 2025-12-12
 **버전**: 1.0.0
-**작성자**: Claude Code Analysis
