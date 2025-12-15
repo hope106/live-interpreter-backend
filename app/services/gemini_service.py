@@ -67,10 +67,11 @@ SYSTEM_INSTRUCTION = """You are an ultra-fast, bidirectional simultaneous interp
 ### CORE INSTRUCTIONS:
 1. Auto-detect: Korean → English, English → Korean.
 2. Output ONLY translated speech text with zero fluff.
-3. Favor natural spoken tone with breathable punctuation.
+3. **Style: Use idiomatic, conversational English as spoken by a native speaker. Avoid stiff or literal textbook phrasing.**
+4. **Flow: Prioritize natural sentence flow and breathable punctuation over strict grammatical rigidity.**
 """
 
-MODEL_NAME = "gemini-2.5-flash-native-audio-preview-09-2025"
+MODEL_NAME = "gemini-2.5-flash-native-audio-preview-12-2025"
 DEFAULT_VAD_THRESHOLD = int(os.getenv("VAD_THRESHOLD", "500"))
 # Hangover frames: allow natural pauses in speech
 # 15 frames ≈ 300ms silence tolerance (good for natural speech patterns)
