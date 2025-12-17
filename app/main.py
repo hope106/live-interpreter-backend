@@ -11,7 +11,7 @@ from .auth.google_oauth import get_google_login_url, exchange_code_for_token, ge
 from .auth.jwt_handler import create_access_token, verify_access_token
 from .auth.whitelist import whitelist
 
-load_dotenv(override=True)
+load_dotenv()
 
 
 def _allowed_origins() -> List[str]:
