@@ -27,16 +27,18 @@ logger = get_logger(__name__)
 class WebSocketHandler:
     """Routes client WebSocket messages to the Gemini Live session."""
 
-    def __init__(self, websocket: WebSocket):
+    def __init__(self, websocket: WebSocket, user_email: str = None):
         self.websocket = websocket
         self.session_id: str = ""
+        self.user_email = user_email
         self.gemini_service: Optional[GeminiService] = None
         self.use_whisper = False
         self.receive_task: Optional[asyncio.Task] = None
 
     async def handle(self) -> None:
         await self.websocket.accept()
-        logger.debug("WebSocket accepted from %s", self.websocket.client)
+        logger.debug("WebSocket accepted from %s (user: %s)",
+                    self.websocket.client, self.user_email)
 
         try:
             while True:

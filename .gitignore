@@ -179,3 +179,4 @@ downloads/
 data/
 .serena/
 .claude/
+.DS_Store
